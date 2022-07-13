@@ -1,0 +1,2 @@
+***Error code will appear in the following format: (Error ID)-(Character ID)***
+LF - load file error, check character consturctor or Assets folder
