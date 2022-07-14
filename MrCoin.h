@@ -18,6 +18,7 @@ public:
 	void idle(sf::Int32 dt);
 	void jump(float velocity);
 	void run(sf::Event, float velocity);
+
 	sf::Sprite getSprite() const;
 
 private:
@@ -29,10 +30,14 @@ private:
 	} };
 	int m_sheetRow{ 0 };
 	int m_sheetColumn{ 0 };
-	std::array<sf::IntRect, 3>::iterator m_fItr{ m_textureRects[m_sheetRow].begin() };
-	std::array<sf::IntRect, 3>::reverse_iterator m_rItr{ m_textureRects[m_sheetRow].rbegin() };
+	
+	std::array<std::array<sf::IntRect, 3>, 2>::iterator m_rowItr {};
+	std::array<sf::IntRect, 3>::iterator m_forwardColItr {};
+	std::array<sf::IntRect, 3>::reverse_iterator m_reverseColItr{};
+
 	bool m_forwardAnim{ true };
 	bool m_reverseAnim{ false };
+	bool m_firstCall{ true };
 	sf::IntRect m_currentRect{m_textureRects[m_sheetRow][m_sheetColumn]};
 
 	sf::Sprite m_sprite;

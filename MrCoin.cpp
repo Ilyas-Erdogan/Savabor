@@ -10,6 +10,14 @@ MrCoin::MrCoin(std::string textureName, sf::Vector2f position, float mass)
 		printf("Could not load file: %s, see error code: LF-100\n", textureName.c_str());
 	}
 
+	// Set iterators
+	m_rowItr = m_textureRects.begin();
+	m_forwardColItr = m_rowItr->begin();
+	m_reverseColItr = m_rowItr->rbegin();
+
+	// Set initial rect
+	m_currentRect = *m_forwardColItr;
+
 	// Set texture details
 	m_sprite.setTexture(m_texture);
 
@@ -67,62 +75,66 @@ void MrCoin::showNextFrame()
 {
 	// This function should only be used in while loop 
 	// when checking over-accumulation of m_timeAccumulation for column reset
-
+	
 	if (m_isIdle)
 	{
 		if (m_forwardAnim)
 		{
-			if (m_fItr != m_textureRects[m_sheetRow].end())
+
+			if (m_forwardColItr != m_rowItr->end())
 			{
-				m_currentRect = *m_fItr;
-				m_fItr++;
+				m_currentRect = *m_forwardColItr;
+				m_forwardColItr++;
 			}
-			if (m_fItr == m_textureRects[m_sheetRow].end())
+
+			if (m_forwardColItr == m_rowItr->end())
 			{
 				m_forwardAnim = false;
 				m_reverseAnim = true;
-				m_fItr = m_textureRects[m_sheetRow].begin();
-				m_rItr = m_textureRects[m_sheetRow].rbegin();
+				m_forwardColItr = m_rowItr->begin();
 			}
 		}
 
 		if (m_reverseAnim)
 		{
-			if (m_rItr != m_textureRects[m_sheetRow].rend())
+
+			if (m_reverseColItr != m_rowItr->rend())
 			{
-				m_currentRect = *m_rItr;
-				m_rItr++;
+				m_currentRect = *m_reverseColItr;
+				m_reverseColItr++;
 			}
-			if (m_rItr == m_textureRects[m_sheetRow].rend())
+
+			if (m_reverseColItr == m_rowItr->rend())
 			{
 				m_forwardAnim = true;
 				m_reverseAnim = false;
-				m_rItr = m_textureRects[m_sheetRow].rbegin();
+				m_reverseColItr = m_rowItr->rbegin();
 			}
 		}
 	}
+
 	if (m_isWalking)
 	{
-		if (m_forwardAnim)
+
+		if (m_forwardColItr != m_rowItr->end())
 		{
-			if (m_fItr != m_textureRects[m_sheetRow].end())
-			{
-				m_currentRect = *m_fItr;
-				m_fItr++;
-			}
-			if (m_fItr == m_textureRects[m_sheetRow].end())
-			{
-				m_fItr = m_textureRects[m_sheetRow].begin();
-			}
+			m_currentRect = *m_forwardColItr;
+			m_forwardColItr++;
+		}
+
+		if (m_forwardColItr == m_rowItr->end())
+		{
+			m_forwardColItr = m_rowItr->begin();
 		}
 	}
 }
+		
 
 void MrCoin::idle(sf::Int32 dt)
 {
 	if (m_isIdle)
 	{
-		m_sheetRow = 0;
+		m_rowItr = m_textureRects.begin();
 
 		while (m_timeAccumulation >= 200)
 		{
@@ -148,8 +160,7 @@ void MrCoin::run(sf::Event event, float velocity)
 {
 	if (m_isWalking)
 	{
-		std::cout << m_isWalking << std::endl;
-		m_sheetRow = 1;
+		m_rowItr = m_textureRects.begin() + 1;
 
 		while (m_timeAccumulation >= 200)
 		{
@@ -164,7 +175,6 @@ void MrCoin::run(sf::Event event, float velocity)
 			showNextFrame();
 		}
 	}
-	
 }
 
 sf::Sprite MrCoin::getSprite() const
