@@ -30,6 +30,9 @@
     <ClCompile Include="MrCoin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -38,9 +41,15 @@
     <ClInclude Include="MrCoin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\graphics\mrcoin.png">
+    <Image Include="Assets\graphics\mrcoin_CHARSELECT.png">
+      <Filter>Resource Files\Assets\graphics</Filter>
+    </Image>
+    <Image Include="Assets\graphics\mrcoin_SPRITESHEET.png">
       <Filter>Resource Files\Assets\graphics</Filter>
     </Image>
   </ItemGroup>

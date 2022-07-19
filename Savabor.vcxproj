@@ -162,7 +162,8 @@
     <ClInclude Include="MrCoin.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\graphics\mrcoin.png" />
+    <Image Include="Assets\graphics\mrcoin_CHARSELECT.png" />
+    <Image Include="Assets\graphics\mrcoin_SPRITESHEET.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

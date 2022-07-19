@@ -1,7 +1,7 @@
 #include "Game.h"
 #include "MrCoin.h"
 
-MrCoin mrcoin("Assets/graphics/mrcoin_SPRITESHEET.png", sf::Vector2f(500.f, 500.f), 400.f);
+MrCoin mrcoin("Assets/graphics/Mr. Coin.png", sf::Vector2f(500.f, 500.f), 400.f);
 
 Game::Game() : m_Window(sf::VideoMode(1200, 900), "Savabor", sf::Style::Close)
 {
@@ -42,7 +42,6 @@ void Game::processEvents()
 				m_Window.close();
 			}
 		}
-
 		// Process character events
 		mrcoin.processEvents(event);
 	}
