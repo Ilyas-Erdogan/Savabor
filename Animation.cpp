@@ -1,22 +1,55 @@
 #include "Animation.h"
 
 
-Animation::Animation(sf::Sprite& p_sprite, const std::array<std::array<sf::IntRect, 3>, 2>& p_spriteSheet)
-	: sprite { p_sprite }, spriteSheet { p_spriteSheet }
+Animation::Animation()
 {
-	currentRect = spriteSheet[0][0];
+
 }
 
 Animation::~Animation()
 {
+
 }
 
-void Animation::update()
+void Animation::setAnimationRects(std::vector<sf::IntRect>& animationRects)
+{
+	m_animationRects = &animationRects;
+}
+
+void Animation::setCurrentRect(sf::IntRect& currentRect)
+{
+	m_currentRect = &currentRect;
+}
+
+void Animation::play()
+{
+	m_isPlaying = true;
+}
+
+void Animation::pause()
+{
+	m_isPlaying = false;
+}
+
+void Animation::idle()
+{
+	setCurrentRect(m_animationRects->at(0));
+}
+
+void Animation::moveLeft()
+{
+
+}
+void Animation::moveRight()
+{
+
+}
+void Animation::jump()
+{
+
+}
+void Animation::attack()
 {
 
 }
 
-void Animation::render()
-{
-	sprite.setTextureRect(currentRect);
-}

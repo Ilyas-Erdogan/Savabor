@@ -1,20 +1,30 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <array>
 
 class Animation
 {
-private:
-	sf::Sprite sprite;
-	std::array<std::array<sf::IntRect, 3>, 2> spriteSheet; // will hold address of spritesheet from PLAYER class
-	sf::IntRect currentRect;
-
 public:
-	Animation(sf::Sprite &p_sprite, const std::array<std::array<sf::IntRect, 3>, 2> &p_spriteSheet);
+	Animation();
 	~Animation();
 
-	void update();
-	void render();
+	void setAnimationRects(std::vector<sf::IntRect>& animationRects);
+	void setCurrentRect(sf::IntRect& currentRect);
+
+	void play();
+	void pause();
+
+	void idle();
+	void moveLeft();
+	void moveRight();
+	void jump();
+	void attack();
+private:
+	int m_currentAnimation{ 0 };
+	bool m_isPlaying{ true };
+	bool m_isPaused{ false };
+
+	std::vector<sf::IntRect>* m_animationRects{ nullptr };
+	sf::IntRect* m_currentRect {nullptr};
 };
 

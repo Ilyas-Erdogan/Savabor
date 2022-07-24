@@ -1,7 +1,8 @@
 #include "Game.h"
+#include "Character.h"
 #include "MrCoin.h"
 
-MrCoin mrcoin("Assets/graphics/Mr. Coin.png", sf::Vector2f(500.f, 500.f), 400.f);
+MrCoin mrcoin;
 
 Game::Game() : m_Window(sf::VideoMode(1200, 900), "Savabor", sf::Style::Close)
 {
@@ -28,7 +29,6 @@ void Game::processEvents()
 	sf::Event event;
 	while (m_Window.pollEvent(event))
 	{
-		//std::cout << event.key.code << std::endl;
 		if (event.type == sf::Event::Closed)
 		{
 			m_Window.close();
@@ -42,7 +42,6 @@ void Game::processEvents()
 				m_Window.close();
 			}
 		}
-		// Process character events
 		mrcoin.processEvents(event);
 	}
 }
@@ -56,7 +55,8 @@ void Game::render()
 {
 	m_Window.clear(sf::Color::White);
 	
-	// Draw whatever
+	mrcoin.render();
+
 	m_Window.draw(mrcoin.getSprite());
 
 	m_Window.display();
