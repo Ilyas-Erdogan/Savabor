@@ -48,7 +48,7 @@ void Game::processEvents()
 
 void Game::update(sf::Time dt)
 {
-	mrcoin.update(dt.asMilliseconds());
+	mrcoin.update(dt);
 }
 
 void Game::render()

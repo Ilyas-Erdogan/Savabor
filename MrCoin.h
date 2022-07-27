@@ -7,12 +7,11 @@ public:
 	MrCoin();
 	~MrCoin();
 
-	virtual void processEvents(sf::Event event) override;
-	virtual void update(sf::Int32 dt) override;
+	virtual void update(sf::Time dt) override;
 	virtual void render() override;
 
-	virtual void play(sf::Int32 dt) override;
-	virtual void pause() override;
+	virtual void animate(sf::Time dt) override;
+	virtual void action(sf::Time dt) override;
 
 private:
 	std::vector<sf::IntRect> m_idleLeft{ { sf::IntRect(0, 0, 32, 32), sf::IntRect(32, 0, 32, 32), sf::IntRect(64, 0, 32, 32), sf::IntRect(96, 0, 32, 32)} };

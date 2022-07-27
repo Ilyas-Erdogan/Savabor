@@ -3,6 +3,7 @@
 MrCoin::MrCoin() : Character("Assets/graphics/Mr. Coin.png")
 {
 	setTextureRects(m_idleLeft);
+	m_position = sf::Vector2f(500.f, 500.f);
 }
 
 MrCoin::~MrCoin()
@@ -10,42 +11,9 @@ MrCoin::~MrCoin()
 
 }
 
-void MrCoin::processEvents(sf::Event event)
-{
-	m_event = event;
-	if (m_event.type == sf::Event::KeyPressed)
-	{
-		switch (m_event.key.code)
-		{
-		case sf::Keyboard::D:
-			//printf("RIGHT\n");
-			m_currentDirection = Direction::RIGHT;
-			m_currentAnimationType = AnimationType::MOVING_RIGHT;
-			m_isLooping = true;
-			break;
-		case sf::Keyboard::A:
-			//printf("LEFT\n");
-			m_currentDirection = Direction::LEFT;
-			m_currentAnimationType = AnimationType::MOVING_LEFT;
-			m_isLooping = true;
-			break;
-		}
-	}
-	else if (m_event.type == sf::Event::KeyReleased)
-	{
-		switch (m_event.key.code)
-		{
-		case sf::Keyboard::D:
-		case sf::Keyboard::A:
-			m_currentAnimationType = AnimationType::IDLE;
-			break;
-		}
-	}
-}
-void MrCoin::update(sf::Int32 dt)
-{
-	m_timeAccumulation += dt;
 
+void MrCoin::update(sf::Time dt)
+{
 	// Sets appropriate vector or rects for animation
 	if (m_currentDirection == Direction::LEFT)
 	{
@@ -75,38 +43,87 @@ void MrCoin::update(sf::Int32 dt)
 		}
 	}
 
-	play(dt);
+	checkBounds();
+	action(dt);
+	animate(dt);
 }
 void MrCoin::render()
 {
+	m_sprite.setPosition(m_position);
 	m_sprite.setTextureRect(m_currentRect);
 }
 
-void MrCoin::play(sf::Int32 dt)
+void MrCoin::animate(sf::Time dt)
 {
-	if (m_isPlaying && m_isLooping)
-	{
-		while (m_timeAccumulation >= 250)
-		{
-			m_timeAccumulation -= 250;
-			m_rectIndex++;
-		}
+	if (m_isPlaying) {
 
-		if (m_timeAccumulation == 250)
+		m_timeAccumulationAnimation += dt.asMilliseconds();
+
+		if (m_isLooping)
 		{
-			m_timeAccumulation -= 250;
-			m_rectIndex++;
-		}
-		if (m_rectIndex >= m_textureRects.size())
-		{
-			m_rectIndex = 0;
+			while (m_timeAccumulationAnimation >= 250)
+			{
+				m_timeAccumulationAnimation -= 250;
+				m_rectIndex++;
+			}
+
+			if (m_timeAccumulationAnimation == 250)
+			{
+				m_timeAccumulationAnimation -= 250;
+				m_rectIndex++;
+			}
+
+			if (m_rectIndex >= m_textureRects.size())
+			{
+				m_rectIndex = 0;
+			}
 		}
 	}
-
 
 	setCurrentRect(m_textureRects[m_rectIndex]);
 }
 
-void MrCoin::pause()
+void MrCoin::action(sf::Time dt)
 {
+	// PURPOSE: Change movement according to action and direction
+
+	m_timeAccumulationAction += dt.asSeconds();
+	
+	if (m_isIdle)
+	{
+		m_velocity = 0.f;
+	}
+
+	if (m_isWalking)
+	{
+		// Accelerate velocity
+		m_velocity += m_acceleration;
+
+		// Change x-coordinate according to direction
+		if (m_currentDirection == Direction::LEFT)
+		{
+			m_position.x -= m_velocity * m_timeAccumulationAction;
+		}
+		if (m_currentDirection == Direction::RIGHT)
+		{
+			m_position.x += m_velocity * m_timeAccumulationAction;
+		}
+
+		// Change acceleration (check max velocity)
+		if (m_velocity >= 500)
+		{
+			m_acceleration = 0;
+		}
+		else
+		{
+			m_acceleration = 5.f;
+		}
+	}
+
+	if (m_isJumping)
+	{
+
+	}
+	
+	m_timeAccumulationAction = 0;
 }
