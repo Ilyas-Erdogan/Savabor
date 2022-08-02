@@ -44,6 +44,7 @@ void Game::processEvents()
 		}
 		mrcoin.processEvents(event);
 	}
+
 }
 
 void Game::update(sf::Time dt)

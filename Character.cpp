@@ -25,36 +25,102 @@ void Character::processEvents(sf::Event event)
 {
 	if (event.type == sf::Event::KeyPressed)
 	{
-		switch (event.key.code)
+		if (event.key.code == sf::Keyboard::A)
 		{
-		case sf::Keyboard::D:
-			m_currentDirection = Direction::RIGHT;
-			m_currentAnimationType = AnimationType::MOVING_RIGHT;
-			setWalkVariables();
-			break;
-		case sf::Keyboard::A:
-			m_currentDirection = Direction::LEFT;
-			m_currentAnimationType = AnimationType::MOVING_LEFT;
-			setWalkVariables();
-			break;
+			m_pressedKeys.key_a = true;
+		}
+		if (event.key.code == sf::Keyboard::D)
+		{
+			m_pressedKeys.key_d = true;
+		}
+		if (event.key.code == sf::Keyboard::W)
+		{
+			m_pressedKeys.key_w = true;
 		}
 	}
-	else if (event.type == sf::Event::KeyReleased)
+	if (event.type == sf::Event::KeyReleased)
 	{
-		switch (event.key.code)
+		if (event.key.code == sf::Keyboard::A)
 		{
-		case sf::Keyboard::D:
-		case sf::Keyboard::A:
-			m_currentAnimationType = AnimationType::IDLE;
-			setIdleVariables();
-			break;
+			m_pressedKeys.key_a = false;
+		}
+		if (event.key.code == sf::Keyboard::D)
+		{
+			m_pressedKeys.key_d = false;
+		}
+		if (event.key.code == sf::Keyboard::W)
+		{
+			m_pressedKeys.key_w = false;
 		}
 	}
 }
 
+void Character::update(sf::Time dt)
+{
+	// Sets appropriate vector or rects for animation
+	m_isWalking = m_pressedKeys.key_a || m_pressedKeys.key_d;
+	m_isJumping = m_pressedKeys.key_w;
+	m_isIdle = !(m_isWalking && m_isJumping);
+
+	if (m_isIdle)
+	{
+		m_isLooping = true;
+	}
+
+	if (m_isWalking)
+	{
+		m_isLooping = true;
+	}
+
+	if (m_isJumping)
+	{
+		m_isLooping = false;
+	}
+
+	setDirection();
+	setAnimation();
+	setRects();
+	checkBounds();
+	action(dt);
+	animate(dt, m_animationRate);
+}
+
+void Character::render()
+{
+	m_sprite.setPosition(m_position);
+	m_sprite.setTextureRect(m_currentRect);
+}
+
+void Character::setDirection()
+{
+	if (m_pressedKeys.key_a)
+		m_currentDirection = Direction::LEFT;
+	if (m_pressedKeys.key_d)
+		m_currentDirection = Direction::RIGHT;
+}
+
+void Character::setAnimation()
+{
+	if (m_isWalking)
+		m_currentAnimationType = AnimationType::MOVING;
+	else if (m_isJumping)
+		m_currentAnimationType = AnimationType::JUMPING;
+	else
+		m_currentAnimationType = AnimationType::IDLE;
+}
+
+void Character::setRects()
+{
+	if (m_isIdle)
+		setIdleRects();
+	if (m_isWalking)
+		setWalkingRects();
+	if (m_isJumping)
+		setJumpingRects();
+}
+
 void Character::checkBounds()
 {
-	//printf("%f\n", m_position.x + (m_sprite.getLocalBounds().width * m_spriteScaleValues.x));
 	if (m_position.x <= 0)
 	{
 		m_position.x = 0;
@@ -62,7 +128,6 @@ void Character::checkBounds()
 	if (m_position.x + (m_sprite.getLocalBounds().width * m_spriteScaleValues.x) >= 1200)
 	{
 		m_position.x = 1200 - (m_sprite.getLocalBounds().width * m_spriteScaleValues.x);
-		printf("YES\n");
 	}
 }
 
@@ -86,6 +151,57 @@ sf::Sprite Character::getSprite()
 	return m_sprite;
 }
 
+void Character::animate(sf::Time dt, int animationRate)
+{
+	if (m_isPlaying) {
+
+		m_timeAccumulationAnimation += dt.asMilliseconds();
+
+		if (m_isLooping)
+		{
+			while (m_timeAccumulationAnimation >= animationRate)
+			{
+				m_timeAccumulationAnimation -= animationRate;
+				m_rectIndex++;
+			}
+
+			if (m_timeAccumulationAnimation == animationRate)
+			{
+				m_timeAccumulationAnimation -= animationRate;
+				m_rectIndex++;
+			}
+
+			if (m_rectIndex >= m_textureRects.size())
+			{
+				m_rectIndex = 0;
+			}
+		}
+
+		if (!m_isLooping)
+		{
+			while (m_timeAccumulationAnimation >= animationRate)
+			{
+				m_timeAccumulationAnimation -= animationRate;
+				m_rectIndex++;
+			}
+
+			if (m_timeAccumulationAnimation == animationRate)
+			{
+				m_timeAccumulationAnimation -= animationRate;
+				m_rectIndex++;
+			}
+
+			if (m_rectIndex >= m_textureRects.size())
+			{
+				m_isLooping = false;
+				m_rectIndex = 0;
+			}
+		}
+	}
+
+	setCurrentRect(m_textureRects[m_rectIndex]);
+}
+
 void Character::play()
 {
 	m_isPlaying = true;
@@ -94,25 +210,4 @@ void Character::play()
 void Character::pause()
 {
 	m_isPlaying = false;
-}
-
-void Character::setIdleVariables()
-{
-	m_isIdle = true;
-	m_isWalking = false;
-	m_isJumping = false;
-}
-
-void Character::setWalkVariables()
-{
-	m_isIdle = false;
-	m_isWalking = true;
-	m_isJumping = false;
-}
-
-void Character::setJumpVariables()
-{
-	m_isIdle = false;
-	m_isWalking = false;
-	m_isJumping = true;
 }
